@@ -20,7 +20,8 @@ const MainPage = () => {
 
       if (!token) {
         // Redireciona para a página de login se não houver token
-        router.push('/login');
+
+        router.push('/');
         return;
       }
 

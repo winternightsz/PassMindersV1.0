@@ -1,4 +1,5 @@
 import { knex as setupKnex } from 'knex';
+console.log('NODE_ENV:', process.env.NODE_ENV);
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
