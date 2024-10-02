@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",                       // Define o target da transpilação (ESNext para usar as últimas features do JS)
+    "module": "commonjs",                     // Usar o sistema de módulos CommonJS (compatível com Node.js)
+    "strict": true,                           // Ativar todas as verificações de tipo estritas
+    "esModuleInterop": true,                  // Ativar interoperabilidade com ES6 modules
+    "skipLibCheck": true,                     // Pular verificação de tipos de bibliotecas para reduzir o tempo de compilação
+    "forceConsistentCasingInFileNames": true, // Forçar consistência de caixa (case) em nomes de arquivos
+    "outDir": "./dist",                       // Saída dos arquivos transpilados (dist)
+    "moduleResolution": "node",               // Usar resolução de módulos estilo Node.js
+    "types": ["node", "fastify"]              // Incluir tipos para Node.js e Fastify
+  },
+  "include": ["src/**/*.ts"],                 // Incluir todos os arquivos TypeScript na pasta src
+  "exclude": ["node_modules"]                 // Excluir node_modules
+}

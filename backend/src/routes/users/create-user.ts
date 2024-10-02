@@ -1,5 +1,6 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { knex } from '../../database'
+import { ZodError } from 'zod';
 import { z } from 'zod'
 
 export const CreateUser = async (app: FastifyInstance) =>{
@@ -17,7 +18,11 @@ export const CreateUser = async (app: FastifyInstance) =>{
     
             return reply.status(201).send({ message: 'Usuário criado com sucesso!' });
         } catch (error) {
-            return reply.status(400).send({ error: error.errors || 'Erro ao criar usuário' });
+            if (error instanceof ZodError) {
+                return reply.status(400).send({ error: error.errors || 'Erro ao criar usuário' });
+            } else {
+                // handle other types of errors
+            }
         }
     });
     
