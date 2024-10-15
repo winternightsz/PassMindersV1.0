@@ -7,7 +7,7 @@ export const FindAllItemConta = async (app: FastifyInstance) => {
         const { accountId } = request.params as { accountId: number };
 
         try {
-            // Busca todos os itens relacionados a uma conta específica
+            // busca todos os itens relacionados a uma conta especifica
             const items = await knex<ItemConta>('ItemConta').where({ id_conta: accountId });
 
             if (!items || items.length === 0) {

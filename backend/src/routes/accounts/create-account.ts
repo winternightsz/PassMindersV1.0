@@ -8,7 +8,7 @@ import { ItemConta } from '../../models/ItemConta';
 export const CreateAccount = async (app: FastifyInstance) => {
     app.post('/createAccount', async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            // Validação do schema de criação de Account e ItemConta
+            // valida pro schema de criacao de Conta e ItemConta
             const AccountSchema = z.object({
                 id_pasta: z.number().int().nonnegative(),
                 titulo: z.string().min(1, "O nome da conta é obrigatório."),
@@ -21,29 +21,29 @@ export const CreateAccount = async (app: FastifyInstance) => {
                 )
             });
 
-            // Parse e validação dos dados da requisição
+            // faz parse e validacao dos dados da requisicao
             const accountData = AccountSchema.parse(request.body);
 
-            // Verifica se o ID da pasta é válido
+            // verifica se o ID da pasta e valido
             console.log("Valor de id_pasta:", accountData.id_pasta);
 
-            // Cria a conta e insere na tabela Account, capturando o ID
+            // cria a conta e insere na tabela Conta pegando o id da conta
             const [accountId] = await knex<Account>('Conta').insert({
                 titulo: accountData.titulo,
-                foto_referencia: accountData.foto_referencia, // Permite que foto seja opcional
+                foto_referencia: accountData.foto_referencia, // deixa que a foto seja opcional
                 id_pasta: accountData.id_pasta
             });
 
-            // Itera pelos dados e insere cada item na tabela ItemConta
+            // itera pelos dados e insere cada item na tabela ItemConta
             for (const item of accountData.dados) {
                 await knex<ItemConta>('ItemConta').insert({
                     rotulo: item.label,
                     dado: item.value,
-                    id_conta: accountId // Usa o ID da conta recém-criada
+                    id_conta: accountId // relaciona cada item a conta criada
                 });
             }
             
-            // Retorna a resposta de sucesso
+            // retorna a resposta de sucesso
             return reply.status(201).send({ message: 'Conta criada com sucesso!' });
 
         }catch (error: unknown) {

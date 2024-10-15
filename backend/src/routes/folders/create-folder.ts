@@ -8,7 +8,7 @@ import { ItemConta } from '../../models/ItemConta';
 export const CreateFolder = async (app: FastifyInstance) => {
     app.post('/createFolder', async (request: FastifyRequest, reply: FastifyReply) => {
         try {
-            // Validação dos dados de Folder, Account e ItemConta
+            // valida os dados pro schema
             const FolderSchema = z.object({
                 nome: z.string().min(1, "O nome da pasta é obrigatório."),
                 accounts: z.array(
@@ -25,42 +25,42 @@ export const CreateFolder = async (app: FastifyInstance) => {
                 ).optional(),
             });
 
-            // Parse e validação dos dados da requisição
+            // faz parse e validacao dos dados da requisicao
             const folderData = FolderSchema.parse(request.body);
 
-            // Verifica se uma pasta com o mesmo nome já existe
+            // verifica se uma pasta com o mesmo nome ja existe
             const existingFolder = await knex<Folder>('Pasta').where({ nome: folderData.nome }).first();
             if (existingFolder) {
                 return reply.status(400).send({ error: 'Uma pasta com este nome já existe' });
             }
 
-            // Cria a pasta
+            // cria a pasta
             const [createdFolderId] = await knex<Folder>('Pasta').insert({
                 nome: folderData.nome,
             });
 
-            // Insere as contas associadas, se houver
+            // insere as contas associadas se tiver
             if (folderData.accounts && folderData.accounts.length > 0) {
                 for (const account of folderData.accounts) {
-                    // Cria cada conta associada à pasta
+                    // cria cada conta associada a pasta
                     const [createdAccountId] = await knex<Account>('Conta').insert({
                         titulo: account.titulo,
                         foto_referencia: account.foto_referencia,
-                        id_pasta: createdFolderId, // Relaciona a conta à pasta recém-criada
+                        id_pasta: createdFolderId, // vai relacionar a pasta criada pegando o id da pasta
                     });
 
-                    // Insere os itens de conta associados à conta
+                    // insere os itens na tabela ItemConta que ja vieram la do front
                     for (const item of account.dados) {
                         await knex<ItemConta>('ItemConta').insert({
                             rotulo: item.label,
                             dado: item.value,
-                            id_conta: createdAccountId, // Relaciona os itens à conta recém-criada
+                            id_conta: createdAccountId, // relaciona com a conta
                         });
                     }
                 }
             }
             
-            // Retorna a pasta criada com seus detalhes
+            // retorna a pasta criada com seus detalhes e o id pra poder dar um refresh no front
             const pastaCriada = await knex<Folder>('Pasta').where({ id: createdFolderId }).first();
             return reply.status(201).send(pastaCriada);
 
