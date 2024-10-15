@@ -5,6 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id').primary();
     table.string('titulo', 50);
     table.string('foto_referencia', 255);
+    table.integer('id_pasta').unsigned().references('id').inTable('Pasta').onDelete('CASCADE');
   });
 }
 
